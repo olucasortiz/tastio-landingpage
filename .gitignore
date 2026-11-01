@@ -1,0 +1,7 @@
+node_modules
+dist
+.taste-skill
+.work
+.vercel
+*.log
+.work-preview.log
