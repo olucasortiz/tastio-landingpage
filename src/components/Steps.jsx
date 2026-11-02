@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { steps } from "../content.js";
-import Reveal from "./Reveal.jsx";
+import Reveal, { EASE } from "./Reveal.jsx";
 
 export default function Steps() {
-  const [open, setOpen] = useState(0);
+  const reduce = useReducedMotion();
   return (
     <section className="steps" id="como" aria-labelledby="steps-h">
-      <div className="steps-intro">
+      <div className="section-head">
         <Reveal as="h2" id="steps-h">
           {steps.title}
         </Reveal>
@@ -14,35 +14,22 @@ export default function Steps() {
           {steps.text}
         </Reveal>
       </div>
-      <Reveal className="acc" delay={0.1}>
+      <ol className="steps-list">
         {steps.items.map((s, n) => (
-          <div
+          <motion.li
             key={s.name}
-            className={`acc-panel acc-${n}${open === n ? " is-open" : ""}`}
+            className="step"
+            initial={reduce ? false : { opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.8, ease: EASE, delay: n * 0.1 }}
+            whileHover={reduce ? undefined : { y: -6 }}
           >
-            <button
-              type="button"
-              className="acc-label"
-              aria-expanded={open === n}
-              aria-controls={`acc-body-${n}`}
-              onClick={() => setOpen(n)}
-            >
-              {s.name}
-            </button>
-            <p className="acc-text" id={`acc-body-${n}`} hidden={open !== n}>
-              {s.text}
-            </p>
-            {s.img && open === n && (
-              <img
-                className={`acc-img${s.img.portrait ? " is-portrait" : ""}`}
-                src={s.img.src}
-                alt={s.img.alt}
-                loading="lazy"
-              />
-            )}
-          </div>
+            <h3>{s.name}</h3>
+            <p>{s.text}</p>
+          </motion.li>
         ))}
-      </Reveal>
+      </ol>
     </section>
   );
 }

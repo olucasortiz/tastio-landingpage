@@ -7,19 +7,19 @@ export default function Faq() {
   const [open, setOpen] = useState(0);
   return (
     <section className="faq" id="duvidas" aria-labelledby="faq-h">
-      <Reveal as="h2" id="faq-h">
-        {faq.title}
-      </Reveal>
-      <div className="faq-stack">
+      <div className="section-head">
+        <Reveal as="h2" id="faq-h">
+          {faq.title}
+        </Reveal>
+      </div>
+      <div className="faq-list">
         {faq.items.map((it, i) => (
           <Reveal
             key={it.q}
             delay={i * 0.06}
             y={20}
-            className={`faq-card faq-c${i % 3}${open === i ? " is-open" : ""}`}
-            style={{ "--i": i }}
+            className={`faq-item${open === i ? " is-open" : ""}`}
           >
-            <span className="faq-tab">{it.tab}</span>
             <button
               type="button"
               className="faq-q"
@@ -28,6 +28,7 @@ export default function Faq() {
               onClick={() => setOpen(open === i ? -1 : i)}
             >
               {it.q}
+              <span className="faq-plus" aria-hidden="true" />
             </button>
             <AnimatePresence initial={false}>
               {open === i && (

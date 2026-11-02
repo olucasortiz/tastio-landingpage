@@ -1,32 +1,20 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { heroSlides, nav, WA_DEMO } from "../content.js";
+import { Fragment } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { nav, WA_DEMO } from "../content.js";
 import { EASE } from "./Reveal.jsx";
+import HeroArt from "./HeroArt.jsx";
 
-const LETTERS = ["T", "A", "S", "T", "I", "O"];
+const WORDS = ["Sistemas", "prontos", "para", "o", "seu", "negócio"];
+const TICKER = ["Assistência técnica", "Delivery", "Mais sistemas a caminho"];
 
 export default function Hero() {
   const reduce = useReducedMotion();
-  const [i, setI] = useState(0);
 
-  // Troca lenta de imagem: segura 5,5 s e cruza em 1,6 s. Pausa com a aba oculta.
-  useEffect(() => {
-    if (reduce) return undefined;
-    let id;
-    const start = () => {
-      id = setInterval(() => setI((n) => (n + 1) % heroSlides.length), 5500);
-    };
-    const onVis = () => {
-      clearInterval(id);
-      if (!document.hidden) start();
-    };
-    start();
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      clearInterval(id);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [reduce]);
+  const rise = (delay) => ({
+    initial: reduce ? false : { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, ease: EASE, delay },
+  });
 
   return (
     <section className="hero" id="topo">
@@ -41,67 +29,52 @@ export default function Hero() {
             </a>
           ))}
         </nav>
-      </header>
-
-      <motion.div
-        className="hero-object"
-        data-ui
-        initial={reduce ? false : { opacity: 0, y: 32 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: EASE, delay: 0.1 }}
-      >
-        <AnimatePresence initial={false}>
-          <motion.img
-            key={heroSlides[i].src}
-            src={heroSlides[i].src}
-            alt={heroSlides[i].alt}
-            width="1280"
-            height="800"
-            style={{ objectPosition: heroSlides[i].pos }}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduce ? 0 : 1.6, ease: "easeInOut" }}
-          />
-        </AnimatePresence>
-      </motion.div>
-
-      <h1 className="wordmark" aria-label="Tastio, sistemas para o seu negócio">
-        <span className="wordmark-letters" aria-hidden="true">
-          {LETTERS.map((l, n) => (
-            <motion.span
-              key={n}
-              initial={reduce ? false : { opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: EASE, delay: 0.35 + n * 0.07 }}
-            >
-              {l}
-            </motion.span>
-          ))}
-        </span>
-      </h1>
-
-      <motion.p
-        className="hero-lead"
-        initial={reduce ? false : { opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: EASE, delay: 0.85 }}
-      >
-        Sistemas prontos para o seu balcão.
-      </motion.p>
-
-      <motion.div
-        className="hero-row"
-        initial={reduce ? false : { opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: EASE, delay: 1 }}
-      >
-        <span>Ordem de serviço com link para o cliente</span>
-        <a className="btn" href={WA_DEMO} target="_blank" rel="noopener">
+        <a className="btn btn-small" href={WA_DEMO} target="_blank" rel="noopener">
           Pedir demonstração
         </a>
-        <span>Cardápio com pedidos pelo celular</span>
-      </motion.div>
+      </header>
+
+      <div className="hero-grid">
+        <div className="hero-copy">
+          <h1>
+            {WORDS.map((w, n) => (
+              <Fragment key={w + n}>
+                <span className="hw">
+                  <motion.span
+                    initial={reduce ? false : { y: "110%" }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.9, ease: EASE, delay: 0.1 + n * 0.07 }}
+                  >
+                    {w}
+                  </motion.span>
+                </span>{" "}
+              </Fragment>
+            ))}
+          </h1>
+          <motion.p {...rise(0.6)}>
+            Assistência técnica, delivery e o que vem a seguir. Cada sistema abre no navegador,
+            sem instalar nada.
+          </motion.p>
+          <motion.div className="hero-actions" {...rise(0.75)}>
+            <a className="btn" href="#sistemas">
+              Ver os sistemas
+            </a>
+            <a className="btn-text" href="#como">
+              Como pedir
+            </a>
+          </motion.div>
+        </div>
+
+        <HeroArt />
+      </div>
+
+      <div className="ticker" aria-hidden="true">
+        <div className="ticker-track">
+          {[...TICKER, ...TICKER, ...TICKER, ...TICKER].map((t, n) => (
+            <span key={n}>{t}</span>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

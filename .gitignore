@@ -5,3 +5,5 @@ dist
 .vercel
 *.log
 .work-preview.log
+.playwright-mcp
+videos
